@@ -130,12 +130,27 @@ coef(summary(sat.voting.mod))
 ##   per capita (energy) from the percentage of residents living in
 ##   metropolitan areas (metro). Be sure to
 ##   1. Examine/plot the data before fitting the model
+sts.ex.energy <- lm(energy ~ metro, data=states.data)
+
 ##   2. Print and interpret the model `summary'
+summary(sts.ex.energy)
+
 ##   3. `plot' the model to look for deviations from modeling assumptions
+plot(sts.ex.energy)
 
 ##   Select one or more additional predictors to add to your model and
 ##   repeat steps 1-3. Is this model significantly better than the model
 ##   with /metro/ as the only predictor?
+states.en.met.green.toxic <- subset(states.data, select = c("energy", "metro", "green", "toxic"))
+summary(states.en.met.green.toxic)
+plot(states.en.met.green.toxic)
+cor(states.en.met.green.toxic, use = "pairwise")
+
+model.sts.ex.energy <- lm(energy ~ metro + green + toxic, data = states.data)
+sts.ex.energy <- update(sts.ex.energy, data=na.omit(states.data))
+summary(model.sts.ex.energy)
+anova(sts.ex.energy, model.sts.ex.energy)
+
 
 ## Interactions and factors
 ## ══════════════════════════
@@ -200,6 +215,11 @@ coef(summary(lm(csat ~ C(region, contr.helmert),
 
 ##   1. Add on to the regression equation that you created in exercise 1 by
 ##      generating an interaction term and testing the interaction.
+sts.energy.interaction <- lm(energy ~ metro * green, data = states.data)
+summary(sts.energy.interaction)
+coef(summary(sts.energy.interaction)) 
 
 ##   2. Try adding region to the model. Are there significant differences
 ##      across the four regions?
+sts.energy.interaction.region_factor <- lm(energy ~ metro * green + as.factor(region), data = states.data)
+summary(sts.energy.interaction.region_factor)
